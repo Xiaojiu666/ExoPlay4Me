@@ -249,8 +249,10 @@ public final class Loader implements LoaderErrorThrower {
    * @throws IllegalStateException If the calling thread does not have an associated {@link Looper}.
    * @return {@link SystemClock#elapsedRealtime} when the load started.
    */
+  public static final String TAG = "Loader";
   public <T extends Loadable> long startLoading(
       T loadable, Callback<T> callback, int defaultMinRetryCount) {
+    Log.d(TAG, "startLoading " + android.util.Log.getStackTraceString(new Throwable()));
     Looper looper = Assertions.checkStateNotNull(Looper.myLooper());
     fatalError = null;
     long startTimeMs = SystemClock.elapsedRealtime();

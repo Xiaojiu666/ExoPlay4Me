@@ -28,35 +28,48 @@ import androidx.annotation.RequiresApi;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.util.Assertions;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-/** A {@link DataSource} for reading local files. */
+/**
+ * A {@link DataSource} for reading local files.
+ */
 public final class FileDataSource extends BaseDataSource {
 
-  /** Thrown when a {@link FileDataSource} encounters an error reading a file. */
+  /**
+   * Thrown when a {@link FileDataSource} encounters an error reading a file.
+   */
   public static class FileDataSourceException extends DataSourceException {
 
-    /** @deprecated Use {@link #FileDataSourceException(Throwable, int)} */
+    /**
+     * @deprecated Use {@link #FileDataSourceException(Throwable, int)}
+     */
     @Deprecated
     public FileDataSourceException(Exception cause) {
       super(cause, PlaybackException.ERROR_CODE_IO_UNSPECIFIED);
     }
 
-    /** @deprecated Use {@link #FileDataSourceException(String, Throwable, int)} */
+    /**
+     * @deprecated Use {@link #FileDataSourceException(String, Throwable, int)}
+     */
     @Deprecated
     public FileDataSourceException(String message, IOException cause) {
       super(message, cause, PlaybackException.ERROR_CODE_IO_UNSPECIFIED);
     }
 
-    /** Creates a {@code FileDataSourceException}. */
+    /**
+     * Creates a {@code FileDataSourceException}.
+     */
     public FileDataSourceException(Throwable cause, @PlaybackException.ErrorCode int errorCode) {
       super(cause, errorCode);
     }
 
-    /** Creates a {@code FileDataSourceException}. */
+    /**
+     * Creates a {@code FileDataSourceException}.
+     */
     public FileDataSourceException(
         @Nullable String message,
         @Nullable Throwable cause,
@@ -65,13 +78,17 @@ public final class FileDataSource extends BaseDataSource {
     }
   }
 
-  /** {@link DataSource.Factory} for {@link FileDataSource} instances. */
+  /**
+   * {@link DataSource.Factory} for {@link FileDataSource} instances.
+   */
   public static final class Factory implements DataSource.Factory {
 
-    @Nullable private TransferListener listener;
+    @Nullable
+    private TransferListener listener;
 
     /**
-     * Sets a {@link TransferListener} for {@link FileDataSource} instances created by this factory.
+     * Sets a {@link TransferListener} for {@link FileDataSource} instances created by this
+     * factory.
      *
      * @param listener The {@link TransferListener}.
      * @return This factory.
@@ -91,8 +108,10 @@ public final class FileDataSource extends BaseDataSource {
     }
   }
 
-  @Nullable private RandomAccessFile file;
-  @Nullable private Uri uri;
+  @Nullable
+  private RandomAccessFile file;
+  @Nullable
+  private Uri uri;
   private long bytesRemaining;
   private boolean opened;
 
@@ -100,8 +119,11 @@ public final class FileDataSource extends BaseDataSource {
     super(/* isNetwork= */ false);
   }
 
+  private static final String TAG = "FileDataSource";
+
   @Override
   public long open(DataSpec dataSpec) throws FileDataSourceException {
+    Log.d(TAG, "FileDataSource " + android.util.Log.getStackTraceString(new Throwable()));
     Uri uri = dataSpec.uri;
     this.uri = uri;
     transferInitializing(dataSpec);
@@ -204,6 +226,7 @@ public final class FileDataSource extends BaseDataSource {
 
   @RequiresApi(21)
   private static final class Api21 {
+
     @DoNotInline
     private static boolean isPermissionError(@Nullable Throwable e) {
       return e instanceof ErrnoException && ((ErrnoException) e).errno == OsConstants.EACCES;
